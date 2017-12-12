@@ -1,0 +1,113 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.4'
+    }
+}
+
+allprojects {
+    repositories {
+        jcenter()
+    }
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+}
+
+apply plugin: 'java'
+apply plugin: 'application'
+
+mainClassName = "com.fpliu.newton.util.FileTypeChecker"
+
+jar {
+    manifest {
+        attributes 'Main-Class': mainClassName
+    }
+}
+
+apply plugin: 'maven'
+apply plugin: 'com.jfrog.bintray'
+
+//这个是版本号，必须填写
+version = "1.0.0"
+
+// 项目的主页,这个是说明，可随便填
+def siteUrl = 'https://github.com/leleliu008/FileTypeChecker-java'
+
+// GitHub仓库的URL,这个是说明，可随便填
+def gitUrl = 'https://github.com/leleliu008/FileTypeChecker-java'
+
+// 这里是groupId,必须填写,一般填你唯一的包名
+group = "com.fpliu"
+
+install {
+    repositories.mavenInstaller {
+        // This generates POM.xml with proper parameters
+        pom {
+            project {
+                packaging 'jar'
+                name 'FileTypeChecker-java'
+                url siteUrl
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id 'fpliu'
+                        name 'fpliu'
+                        email 'leleliu008@gmail.com'
+                    }
+                }
+                scm {
+                    connection gitUrl
+                    developerConnection gitUrl
+                    url siteUrl
+                }
+            }
+        }
+    }
+}
+
+// 生成jar包的task
+task sourcesJar(type: Jar) {
+    from sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+// 生成javaDoc的jar
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+bintray {
+    user = properties.getProperty("bintray.user")
+    key = properties.getProperty("bintray.apikey")
+
+    configurations = ['archives']
+    pkg {
+        userOrg = "fpliu"
+        repo = "newton"
+        name = "FileTypeChecker-java"
+        websiteUrl = siteUrl
+        vcsUrl = gitUrl
+        licenses = ["Apache-2.0"]
+        publish = true
+    }
+}
