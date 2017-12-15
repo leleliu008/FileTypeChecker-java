@@ -146,6 +146,14 @@ public final class FileTypeChecker {
         }
         return stringBuilder.toString();
     }
+    
+    private static void showHelp() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("usage:   java -jar FileTypeChecker.jar <filePath> [expectType]\n");
+        stringBuilder.append("example: java -jar FileTypeChecker.jar ~/xx.png \n");
+        stringBuilder.append("         java -jar FileTypeChecker.jar ~/xx.png PNG\n");
+        System.out.println(stringBuilder.toString());
+    }
 
     /*
      * 支持命令行运行
@@ -153,13 +161,13 @@ public final class FileTypeChecker {
     public static void main(String[] args) {
         int length = args.length;
         if (length == 0) {
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("usage:   java -jar FileTypeChecker.jar <filePath> [expectType]\n");
-            stringBuilder.append("example: java -jar FileTypeChecker.jar ~/xx.png \n");
-            stringBuilder.append("         java -jar FileTypeChecker.jar ~/xx.png PNG\n");
-            System.out.println(stringBuilder.toString());
+            showHelp();
         } else if (length == 1) {
-            System.out.println(getType(args[0]));
+            if("-h".equals(args[0]) || "--help".equals(args[0])) {
+                showHelp();
+            } else {
+                System.out.println(getType(args[0]));
+            }
         } else if (length > 1) {
             System.out.println(check(args[0], args[1]));
         }
